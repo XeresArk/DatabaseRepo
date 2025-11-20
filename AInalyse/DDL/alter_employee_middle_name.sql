@@ -1,1 +1,0 @@
-alter table employee add column middle_name varchar(50);
