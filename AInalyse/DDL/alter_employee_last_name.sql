@@ -1,0 +1,1 @@
+alter table employee add column last_name varchar(50);
