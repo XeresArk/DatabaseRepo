@@ -38,9 +38,10 @@ BEGIN
 
         -- 1) VIEWS referencing this table
         INSERT INTO HACKATHON_SEARCH_RESULT
-        (run_id, search_desc, owner_name, table_name, created_by, created_date)
+        (run_id, obj_type, search_desc, owner_name, table_name, created_by, created_date)
         SELECT 
             V_RUN_ID,
+            'VIEW',
             UPPER(view_name),
             V_OWNER,
             V_TABLE_NAME,
@@ -53,10 +54,11 @@ BEGIN
 
         -- 2) PROCEDURES & FUNCTIONS referencing this table
         INSERT INTO HACKATHON_SEARCH_RESULT
-        (run_id, search_desc, owner_name, table_name, created_by, created_date)
+        (run_id, obj_type, search_desc, owner_name, table_name, created_by, created_date)
         SELECT
             V_RUN_ID,
-            UPPER(CONCAT(routine_name, ' ', routine_type)),
+            routine_type,
+            UPPER(routine_name),
             V_OWNER,
             V_TABLE_NAME,
             'SYSTEM',
@@ -68,9 +70,10 @@ BEGIN
 
         -- 3) FOREIGN KEY CONSTRAINTS involving this table
         INSERT INTO HACKATHON_SEARCH_RESULT
-        (run_id, search_desc, owner_name, table_name, created_by, created_date)
+        (run_id, obj_type, search_desc, owner_name, table_name, created_by, created_date)
         SELECT
             V_RUN_ID,
+            'CONSTRAINT',
             UPPER(CONCAT(V_TABLE_NAME, ' ', constraint_name, ' ', referenced_table_name)),
             V_OWNER,
             V_TABLE_NAME,
@@ -87,9 +90,10 @@ BEGIN
 
         -- 1) TABLES containing the column
         INSERT INTO HACKATHON_SEARCH_RESULT
-        (run_id, search_desc, owner_name, table_name, column_name, created_by, created_date)
+        (run_id, obj_type, search_desc, owner_name, table_name, column_name, created_by, created_date)
         SELECT
             V_RUN_ID,
+            'COLUMN',
             UPPER(CONCAT(TABLE_NAME, '.', COLUMN_NAME)),
             V_OWNER,
             UPPER(TABLE_NAME),
@@ -102,10 +106,11 @@ BEGIN
 
         -- 3) PROCEDURES & FUNCTIONS referencing the column
         INSERT INTO HACKATHON_SEARCH_RESULT
-        (run_id, search_desc, owner_name, table_name, column_name, created_by, created_date)
+        (run_id, obj_type, search_desc, owner_name, table_name, column_name, created_by, created_date)
         SELECT
             V_RUN_ID,
-            UPPER(CONCAT(routine_type, ' ', routine_name)),
+            routine_type,
+			UPPER(routine_name),
             V_OWNER,
             V_TABLE_NAME,
             V_COLUMN_NAME,
@@ -118,9 +123,10 @@ BEGIN
 
         -- 4) TRIGGERS referencing the column
         INSERT INTO HACKATHON_SEARCH_RESULT
-        (run_id, search_desc, owner_name, table_name, column_name, created_by, created_date)
+        (run_id, obj_type, search_desc, owner_name, table_name, column_name, created_by, created_date)
         SELECT
             V_RUN_ID,
+            'TRIGGER',
             UPPER(trigger_name),
             V_OWNER,
             V_TABLE_NAME,
